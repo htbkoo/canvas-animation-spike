@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Experiments for canvas animation on scrolling</title>
+</head>
+<body>
+<canvas id="background" width="150" height="150"></canvas>
+</body>
+<script>
+    (function () {
+        var images = [];
+        var currentLocation = 0;
+        var totalImages = 7;
+
+        for (var i = 0; i < totalImages; i++) {
+            var img = new Image;
+            switch (i) {
+                case 0:
+                    img.src = "http://img.pokemondb.net/sprites/black-white/normal/mewtwo.png";
+                    break;
+                case 1:
+                    img.src = "http://img.pokemondb.net/sprites/black-white/normal/keldeo-ordinary.png";
+                    break;
+                case 2:
+                    img.src = "http://img.pokemondb.net/sprites/black-white/normal/darkrai.png";
+                    break;
+                case 3:
+                    img.src = "http://floatzel.net/pokemon/black-white/sprites/images/5.png";
+                    break;
+                case 4:
+                    img.src = "http://vignette1.wikia.nocookie.net/capx/images/0/03/001.png/revision/latest?cb=20140322003659";
+                    break;
+                case 5:
+                    img.src = "http://img.pokemondb.net/sprites/black-white/normal/absol.png";
+                    break;
+                case 6:
+                    img.src = "http://img.pokemondb.net/sprites/black-white/normal/dewgong.png";
+                    break;
+                case 7:
+                    img.src = "http://orig05.deviantart.net/e770/f/2013/008/c/6/froakie_by_baconboy914-d5qvrjo.gif";
+                    break;
+            }
+
+            images.push(img);
+        }
+
+        var c = document.getElementById("background");
+        var ctx = c.getContext("2d");
+
+        var mouseWheel = function () {
+            window.addEventListener('mousewheel', function (e) {
+                e.preventDefault(); // No scroll
+
+                // The following equation will return either a 1 for scroll down
+                // or -1 for a scroll up
+                var delta = Math.max(-1, Math.min(1, e.wheelDelta));
+
+                // This code mostly keeps us from going too far in either direction
+                if (delta == -1) currentLocation += 1;
+                if (delta == 1) currentLocation -= 1;
+                if (currentLocation < 0) currentLocation = 0;
+                if (currentLocation >= (totalImages - 1)) currentLocation = (totalImages - 1);
+                console.log("Current location " + currentLocation);
+
+                // See below for the details of this function
+                setImage(currentLocation);
+            });
+        }
+
+        var setImage = function (newLocation) {
+            // drawImage takes 5 arguments: image, x, y, width, height
+            ctx.fillRect(0, 0, c.width, c.height);
+            ctx.drawImage(images[newLocation], 0, 0, 150, 150);
+        }
+
+        images[0].onload = function () {
+            ctx.fillRect(0, 0, c.width, c.height);
+            ctx.drawImage(images[currentLocation], 0, 0, 150, 150);
+            mouseWheel();
+        };
+    })()
+</script>
+
+</html>
