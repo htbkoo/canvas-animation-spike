@@ -1,20 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:rel="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Experiments for canvas animation on scrolling</title>
+
+    <script type="text/javascript" src="resources/js/libgif-js/libgif.js"></script>
+    <script type="text/javascript" src="resources/js/libgif-js/rubbable.js"></script>
 </head>
 <body>
-<canvas id="background" width="150" height="150"></canvas>
-</body>
+
+<img src="resources/img/lihkg_dance2.gif" rel:animated_src="resources/img/lihkg_dance2.gif"
+     width="250" height="276" rel:auto_play="0" rel:rubbable="0" id="img1" alt="dance"/>
+<br>
+<script type="text/javascript">
+    function loadSuperGif(elementId) {
+        var element = document.getElementById(elementId);
+        var sup1 = new SuperGif({gif: element});
+        sup1.load();
+        addWheelListener()
+        // sup1.load_url();
+
+
+        function addWheelListener() {
+            window.addEventListener('wheel', function (e) {
+                /*
+                * wheel { target: html, buttons: 0, clientX: 596, clientY: 409, layerX: 596, layerY: 409 }
+                * */
+
+                e.preventDefault(); // No scroll
+
+                let currentFrame = sup1.get_current_frame();
+
+                // The following equation will return either a 1 for scroll down
+                // or -1 for a scroll up
+                var delta = Math.max(-1, Math.min(1, e.deltaY));
+
+                let nextFrame = (currentFrame + delta + 32) % 32
+
+
+                sup1.move_to(nextFrame)
+            });
+        }
+
+    }
+
+
+    loadSuperGif('img1');
+</script>
+
 <script>
-    (function () {
-        var images = [];
+    function wheelEffectExample() {
         var currentLocation = 0;
         var totalImages = 7;
 
+        var IMAGE_DATA = [
+            {src: "resources/img/lihkg_dance2.gif", frames: 32, width: 250, height: 276},
+            {src: "resources/img/lihkg_dance.gif", frames: 4, width: 250, height: 293},
+            {src: "resources/img/lihkg_angry.gif", frames: 4, width: 250, height: 135},
+        ]
+
+        var images = IMAGE_DATA.map()
+
         for (var i = 0; i < totalImages; i++) {
             var img = new Image;
+
             switch (i) {
                 case 0:
                     img.src = "http://img.pokemondb.net/sprites/black-white/normal/mewtwo.png";
@@ -79,7 +128,8 @@
             ctx.drawImage(images[currentLocation], 0, 0, 150, 150);
             mouseWheel();
         };
-    })()
+    }
 </script>
 
+</body>
 </html>
